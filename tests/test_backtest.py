@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from quant_agent.backtest.engine import BacktestResult, run_backtest
+from quant_agent.backtest.engine import run_backtest
 
 
 # ---------------------------------------------------------------------------
