@@ -42,7 +42,9 @@ def test_cache_miss_then_hit(fake_ohlcv: pd.DataFrame, isolated_cache: Path) -> 
         df2 = cache_mod.get_prices("SPY", "2023-01-01", "2023-01-15")
 
     assert mock_dl.call_count == 1, "second call must hit cache, not re-download"
-    pd.testing.assert_frame_equal(df1, df2)
+    # Parquet round-trip preserves data but drops DatetimeIndex.freq metadata,
+    # which is fine for our use case. Compare values, not internal metadata.
+    pd.testing.assert_frame_equal(df1, df2, check_freq=False)
 
 
 def test_cache_key_separates_distinct_ranges(
@@ -56,9 +58,7 @@ def test_cache_key_separates_distinct_ranges(
     assert mock_dl.call_count == 2
 
 
-def test_use_cache_false_forces_redownload(
-    fake_ohlcv: pd.DataFrame, isolated_cache: Path
-) -> None:
+def test_use_cache_false_forces_redownload(fake_ohlcv: pd.DataFrame, isolated_cache: Path) -> None:
     """Even with a cached file, use_cache=False bypasses it."""
     with patch.object(cache_mod, "_download", return_value=fake_ohlcv) as mock_dl:
         cache_mod.get_prices("SPY", "2023-01-01", "2023-01-15")
