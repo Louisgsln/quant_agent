@@ -165,6 +165,11 @@ def test_summary_returns_expected_keys(trending_up: pd.DataFrame) -> None:
     result = run_backtest(trending_up, pos)
 
     summary = result.summary()
-    assert set(summary.keys()) == {"n_days", "final_equity", "benchmark_final_equity", "turnover_total"}
+    assert set(summary.keys()) == {
+        "n_days",
+        "final_equity",
+        "benchmark_final_equity",
+        "turnover_total",
+    }
     assert summary["n_days"] == 100
     assert summary["final_equity"] > 0
